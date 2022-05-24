@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Form, InputGroup, FormControl, Alert } from "react-bootstrap";
+import { Form,
+  InputGroup,
+  FormControl,
+  Alert,
+  Container,
+  Row
+} from "react-bootstrap";
+
+import './Converter.css';
 
 const ConverterForm = () => {
   const [binaryNum, setBinaryNum] = useState("");
@@ -9,10 +17,13 @@ const ConverterForm = () => {
 
   const decToBin = (value) => {
     const inputIsDecimal = new RegExp(/^\d+$/);
+    const inputIsExponential = new RegExp('^[-+]?(0?|[1-9][0-9]*)(\.[0-9]*[1-9])?([eE][-+]?(0|[1-9][0-9]*))?$');
     let result = null;
 
-    if (inputIsDecimal.test(value)) {
-      result = parseInt(value, 10).toString(2);
+    if (
+      inputIsDecimal.test(value) || inputIsExponential.test(value)
+    ) {
+      result = new Number(value).toString(2);
     }
 
     return result;
@@ -23,7 +34,7 @@ const ConverterForm = () => {
     let result = null;
 
     if (inputIsBinary.test(value)) {
-      result = parseInt(value, 2);
+      result = new Number('0b' + value.toString()).toString(10);
     }
 
     return result;
@@ -38,14 +49,15 @@ const ConverterForm = () => {
   };
 
   const handleInputChange = (target) => {
-    if (target.value === "") {
+    const value = target.value.trim();
+    if (value === "") {
       setBinaryNum("");
       setDecimalNum("");
     } else {
       let result = null;
       switch (target.name) {
         case "binaryNumInput":
-          result = binToDec(target.value);
+          result = binToDec(value);
 
           if (result === null) {
             setAlertText(
@@ -55,13 +67,13 @@ const ConverterForm = () => {
           } else {
             setAlertText("");
             setInvalidInput(false);
-            setBinaryNum(target.value);
+            setBinaryNum(value);
             setDecimalNum(result);
           }
 
           break;
         case "decimalNumInput":
-          result = decToBin(target.value);
+          result = decToBin(value);
 
           if (result === null) {
             setAlertText(
@@ -71,7 +83,7 @@ const ConverterForm = () => {
           } else {
             setAlertText("");
             setInvalidInput(false);
-            setDecimalNum(target.value);
+            setDecimalNum(value);
             setBinaryNum(result);
           }
           break;
@@ -80,10 +92,10 @@ const ConverterForm = () => {
   };
 
   return (
-    <>
-      <div>
+    <Container fluid="md">
+      <Row>
         <Form>
-          <InputGroup>
+          <InputGroup className="inputBoxes">
             <InputGroup.Text>Binary Number</InputGroup.Text>
             <FormControl
               as="textarea"
@@ -96,7 +108,7 @@ const ConverterForm = () => {
               }}
             />
           </InputGroup>
-          <InputGroup>
+          <InputGroup className="inputBoxes">
             <InputGroup.Text>Decimal Number</InputGroup.Text>
             <FormControl
               as="textarea"
@@ -110,11 +122,11 @@ const ConverterForm = () => {
             />
           </InputGroup>
         </Form>
-      </div>
-      <div>
+          </Row>
+      <Row className="infobar">
         <InvalidInputWarn showMessage={!invalidInput} message={alertText} />
-      </div>
-    </>
+        </Row>
+    </Container>
   );
 };
 
