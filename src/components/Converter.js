@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Form,
   InputGroup,
-  FormControl,
   Alert,
   Container,
   Row
@@ -92,40 +91,43 @@ const ConverterForm = () => {
   };
 
   return (
-    <Container fluid="md">
+    <Container>
       <Row>
         <Form>
-          <InputGroup className="inputBoxes">
-            <InputGroup.Text>Binary Number</InputGroup.Text>
-            <FormControl
-              as="textarea"
-              aria-label="With textarea"
-              controlId="binNumInputGrp"
+          {/* Binary Number Input */}
+          <Form.Group className="mb-3 justify-content-left" controlId="formBasicBinInput">
+            <Form.Label>Binary Number</Form.Label>
+            <Form.Control
+              type="input"
+              placeholder="Enter a binary number"
               value={binaryNum}
               name="binaryNumInput"
               onChange={(e) => {
                 handleInputChange(e.target);
               }}
             />
-          </InputGroup>
-          <InputGroup className="inputBoxes">
-            <InputGroup.Text>Decimal Number</InputGroup.Text>
-            <FormControl
-              as="textarea"
-              aria-label="With textarea"
-              controlId="decNumInputGrp"
+          </Form.Group>
+
+          {/* Decimal Number Input */}
+          <Form.Group className="mb-3" controlId="formBasicDecInput">
+            <Form.Label>Decimal Number</Form.Label>
+            <Form.Control
+              type="input"
+              placeholder="Enter a decimal number"
               value={decimalNum}
               name="decimalNumInput"
               onChange={(e) => {
                 handleInputChange(e.target);
               }}
             />
-          </InputGroup>
+          </Form.Group>
         </Form>
-          </Row>
+        </Row>
+
+      {/* Show warning if invalid input is detected */}
       <Row className="infobar">
         <InvalidInputWarn showMessage={!invalidInput} message={alertText} />
-        </Row>
+      </Row>
     </Container>
   );
 };
