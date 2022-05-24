@@ -1,6 +1,4 @@
-# binary-decimal-conv
-
-A binary-decimal number converter.
+# Binary-Decimal Converter
 
 * The user can see the converted number as they type (bin <-> dec).
 * So no need to press "convert" every time.
