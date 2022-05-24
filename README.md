@@ -1,4 +1,4 @@
-# Binary-Decimal Converter
+# Binary-Decimal Number Converter
 
 * The user can see the converted number as they type (bin <-> dec).
 * So no need to press "convert" every time.
