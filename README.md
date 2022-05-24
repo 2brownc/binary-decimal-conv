@@ -1,5 +1,12 @@
 # binary-decimal-conv
 
-A binary-decimal converter.
+A binary-decimal number converter.
 
-You can type in a binary number and see the converted decimal number and vice versa.
+* The user can see the converted number as they type (bin <-> dec).
+* So no need to press "convert" every time.
+* User will be notified of invalid input.
+* Only valid input is accepted into the input fields.
+
+Built Using:
+* Node.js
+* React.js
