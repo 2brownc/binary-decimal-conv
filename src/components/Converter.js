@@ -1,54 +1,45 @@
-import React, { useState } from "react";
-import { Form,
-  InputGroup,
-  Alert,
-  Container,
-  Row
-} from "react-bootstrap";
+import React, { useState, useReducer } from "react";
+import { Form, Alert, Container, Row } from "react-bootstrap";
 
-import './Converter.css';
+import { errReducer, errInit } from './ErrorInfo'
+import "./Converter.css";
 
 const ConverterForm = () => {
   const [binaryNum, setBinaryNum] = useState("");
   const [decimalNum, setDecimalNum] = useState("");
-  const [invalidInput, setInvalidInput] = useState(false);
-  const [alertText, setAlertText] = useState("");
+
+  const [errState, errDispatch] = useReducer(errReducer, "", errInit);
 
   const decToBin = (value) => {
-    const inputIsDecimal = new RegExp(/^\d+$/);
-    const inputIsExponential = new RegExp('^[-+]?(0?|[1-9][0-9]*)(\.[0-9]*[1-9])?([eE][-+]?(0|[1-9][0-9]*))?$');
-    let result = null;
-
-    if (
-      inputIsDecimal.test(value) || inputIsExponential.test(value)
-    ) {
-      result = new Number(value).toString(2);
-    }
-
-    return result;
+    return value.toString(2);
   };
 
   const binToDec = (value) => {
-    const inputIsBinary = new RegExp(/^[01]+$/);
-    let result = null;
-
-    if (inputIsBinary.test(value)) {
-      result = new Number('0b' + value.toString()).toString(10);
-    }
-
-    return result;
+    return value.toString(10);
   };
 
-  const InvalidInputWarn = ({ showMessage, message }) => {
-    if (showMessage) {
+  const InvalidInputWarn = ({ showMsg, msg }) => {
+    console.log(showMsg, msg);
+    if (!showMsg) {
       return null;
     }
 
-    return <Alert variant="warning">{message}</Alert>;
+    return <Alert variant="warning">{msg}</Alert>;
   };
 
   const handleInputChange = (target) => {
+    //regex tests
+    const inputIsDecimal = new RegExp(/^\d+$/);
+    const inputIsBinary = new RegExp(/^[01]+$/);
+
     const value = target.value.trim();
+    let number = null;
+
+   errDispatch({
+     type: "RESET",
+     payload: ""
+   });
+
     if (value === "") {
       setBinaryNum("");
       setDecimalNum("");
@@ -56,36 +47,48 @@ const ConverterForm = () => {
       let result = null;
       switch (target.name) {
         case "binaryNumInput":
-          result = binToDec(value);
+          number = new Number(`0b${value}`);
 
-          if (result === null) {
-            setAlertText(
-              `Check your input! "${target.value}" is not a valid binary number.`
-            );
-            setInvalidInput(true);
+          if (!inputIsBinary.test(value)) {
+          errDispatch({
+            type: "INVALID_NUM_BINARY",
+            payload: value
+          });
+          } else if (number > Number.MAX_SAFE_INTEGER) {
+            errDispatch({
+              type: "EXCEED_LIMIT_BINARY",
+              payload: value
+            });
           } else {
-            setAlertText("");
-            setInvalidInput(false);
+            const result = binToDec(number);
+
             setBinaryNum(value);
             setDecimalNum(result);
           }
 
           break;
         case "decimalNumInput":
-          result = decToBin(value);
+          number = new Number(value);
 
-          if (result === null) {
-            setAlertText(
-              `Check your input! "${target.value}" is not a valid decimal number.`
-            );
-            setInvalidInput(true);
+          if (!inputIsDecimal.test(value)) {
+            errDispatch({
+              type: "INVALID_NUM_DECIMAL",
+              payload: value
+            });
+          } else if (number > Number.MAX_SAFE_INTEGER) {
+            errDispatch({
+              type: "EXCEED_LIMIT_DECIMAL",
+              payload: value
+            });
           } else {
-            setAlertText("");
-            setInvalidInput(false);
+            const result = decToBin(number);
+
             setDecimalNum(value);
             setBinaryNum(result);
           }
           break;
+        default:
+          throw Error(`unexpected case: ${target.name}`);
       }
     }
   };
@@ -95,7 +98,10 @@ const ConverterForm = () => {
       <Row>
         <Form>
           {/* Binary Number Input */}
-          <Form.Group className="mb-3 justify-content-left" controlId="formBasicBinInput">
+          <Form.Group
+            className="mb-3 justify-content-left"
+            controlId="formBasicBinInput"
+          >
             <Form.Label>Binary Number</Form.Label>
             <Form.Control
               type="input"
@@ -122,11 +128,11 @@ const ConverterForm = () => {
             />
           </Form.Group>
         </Form>
-        </Row>
+      </Row>
 
       {/* Show warning if invalid input is detected */}
       <Row className="infobar">
-        <InvalidInputWarn showMessage={!invalidInput} message={alertText} />
+        <InvalidInputWarn showMsg={errState.showMsg} msg={errState.msg} />
       </Row>
     </Container>
   );
