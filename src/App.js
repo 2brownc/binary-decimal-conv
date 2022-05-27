@@ -1,6 +1,3 @@
-import { Container, Row } from "react-bootstrap";
-
-import logo from "./logo.svg";
 import ConverterForm from "./components/Converter";
 import Footer from "./components/Footer";
 import './App.css';
