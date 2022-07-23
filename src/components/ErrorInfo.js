@@ -1,6 +1,6 @@
 const invalidNumMsg = (number, type) => {
   return (
-    `"${number}" is not a ${type} number. Please check your output.`
+    `"${number}" is not a ${type} number. Please check your input.`
   );
 }
 
